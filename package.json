@@ -1,0 +1,22 @@
+{
+  "name": "api-as-a-worker-ts",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "wrangler dev src/index.ts",
+    "dev:local": "wrangler dev src/index.ts --experimental-local",
+    "lint": "prettier --write ."
+  },
+  "devDependencies": {
+    "@cloudflare/workers-types": "^4.20230307.0",
+    "@miniflare/tre": "3.0.0-next.12",
+    "@typescript-eslint/eslint-plugin": "^5.56.0",
+    "@typescript-eslint/parser": "^5.56.0",
+    "eslint": "^8.36.0",
+    "prettier": "^2.8.5",
+    "typescript": "^5.0.2",
+    "wrangler": "^2.12.3"
+  },
+  "dependencies": {
+    "hono": "^3.1.2"
+  }
+}

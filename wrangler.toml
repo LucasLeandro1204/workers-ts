@@ -1,0 +1,26 @@
+workers_dev = true
+name = "api-worker-dev"
+main = "src/index.ts"
+tsconfig = "tsconfig.json"
+compatibility_date = "2023-03-20"
+
+[vars]
+SECRET = "secret"
+PASSWORD = "password"
+
+[durable_objects]
+bindings = [
+  { name = "PING", class_name = "PingDurableObject" }
+]
+
+[env.production]
+workers_dev = false
+name = "api-worker"
+
+[env.production.vars]
+SECRET = ""
+PASSWORD = ""
+
+[[migrations]]
+tag = "v1"
+new_classes = ["Ping"]
