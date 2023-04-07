@@ -1,19 +1,35 @@
+import { Hono } from 'hono';
+
+function createPingDurableObject(durable: DurableObjectState) {
+  const app = new Hono<{ Bindings: Bindings }>();
+
+  let count: number = 0;
+
+  app.get('/pong', async (ctx) => {
+    ++count;
+    durable.storage.put('count', count);
+    return ctx.text(`pong ${count}`);
+  });
+
+  // Initialize the durable object state
+  durable.blockConcurrencyWhile(async () => {
+    const stored = await durable.storage.get<number>('count');
+    count = stored || 0;
+  });
+
+  return app;
+}
+
 export class PingDurableObject {
-  count: number;
-  storage: DurableObjectStorage;
+  env: Env;
+  app: Hono<{ Bindings: Bindings }>;
 
   constructor(state: DurableObjectState, env: Env) {
-    this.storage = state.storage;
-    this.count = 0;
+    this.env = env;
+    this.app = createPingDurableObject(state);
   }
 
   async fetch(request: Request) {
-    const { pathname } = new URL(request.url);
-
-    if (pathname.startsWith('/pong')) {
-      return new Response(`pong ${this.count++}`);
-    }
-
-    return new Response('Not Found', { status: 404 });
+    return this.app.fetch(request, this.env);
   }
 }

@@ -2,7 +2,7 @@ import { Hono } from 'hono';
 import { prettyJSON } from 'hono/pretty-json';
 
 export function createWorker() {
-  const app = new Hono<{ Bindings: Env }>();
+  const app = new Hono<{ Bindings: Bindings }>();
 
   app.use('*', prettyJSON());
   app.get('/', (ctx) => ctx.text('Worker is running.'));
