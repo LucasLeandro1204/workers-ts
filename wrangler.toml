@@ -2,7 +2,7 @@ workers_dev = true
 name = "api-worker-dev"
 main = "src/index.ts"
 tsconfig = "tsconfig.json"
-compatibility_date = "2023-03-20"
+compatibility_date = "2023-03-07"
 
 [vars]
 SECRET = "secret"

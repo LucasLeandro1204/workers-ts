@@ -7,12 +7,24 @@ export function createWorker() {
   app.use('*', prettyJSON());
   app.get('/', (ctx) => ctx.text('Worker is running.'));
 
-  app.get('/ping', (ctx) => {
+  app.get('/ping', async (ctx) => {
     const ping = ctx.env.PING.get(
       ctx.env.PING.idFromName('pong'),
     );
+    const url = new URL(ctx.req.url);
+    url.pathname = '/pong';
 
-    return ping.fetch(ctx.req.raw);
+    return ping.fetch(url);
+  });
+
+  app.get('/ping2', async (ctx) => {
+    const ping = ctx.env.PING.get(
+      ctx.env.PING.idFromName('pong2'),
+    );
+    const url = new URL(ctx.req.url);
+    url.pathname = '/pong';
+
+    return ping.fetch(url);
   });
 
   app.notFound((ctx) => ctx.json({
