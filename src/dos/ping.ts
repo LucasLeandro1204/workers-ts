@@ -12,8 +12,11 @@ function createPingDurableObject(durable: DurableObjectState) {
 
   app.get('/pong', async (ctx) => {
     ++count;
-    durable.storage.put('count', count);
-    return ctx.text(`pong ${count}`);
+    // durable.storage.put('count', count);
+    return ctx.json({
+      ok: true,
+      message: `pong ${count}`,
+    });
   });
 
   return app;

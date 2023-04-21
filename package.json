@@ -1,5 +1,5 @@
 {
-  "name": "api-as-a-worker-ts",
+  "name": "workers-ts",
   "version": "0.0.1",
   "scripts": {
     "dev": "wrangler dev src/index.ts --experimental-local",

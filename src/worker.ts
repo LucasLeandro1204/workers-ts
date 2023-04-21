@@ -4,12 +4,10 @@ import { prettyJSON } from 'hono/pretty-json';
 
 export function createWorker() {
   const app = new Hono<{ Bindings: Bindings }>();
-  
+
   app.use('*', prettyJSON());
   app.use('*', cors({ origin: '*' }));
   app.get('/', (ctx) => ctx.text('Worker is running.'));
-
-  const INTEGRATION_COOKIE = 'ls__instegration';
 
   app.get('/worker/notification', async (ctx) => {
     return ctx.json({
@@ -22,8 +20,7 @@ export function createWorker() {
     const url = new URL(ctx.req.url);
     url.pathname = url.pathname.replace('/integration', '');
 
-    const cookie = ctx.req.cookie(INTEGRATION_COOKIE);
-    const id = cookie ? ctx.env.INTEGRATION.idFromString(cookie) : ctx.env.INTEGRATION.newUniqueId();
+    const id = ctx.env.INTEGRATION.newUniqueId();
 
     const integration = ctx.env.INTEGRATION.get(id);
 
@@ -35,15 +32,12 @@ export function createWorker() {
     const url = new URL(ctx.req.url);
     url.pathname = '/pong';
 
-    return ping.fetch(url);
-  });
+    const res = await ping.fetch(new Request(url, ctx.req));
 
-  app.get('/ping2', async (ctx) => {
-    const url = new URL(ctx.req.url);
-    url.pathname = '/pong';
-
-    const ping = ctx.env.PING.get(ctx.env.PING.idFromName('pong2'));
-    return ping.fetch(url);
+    return ctx.json({
+      ok: true,
+      data: await res.json(),
+    });
   });
 
   app.notFound((ctx) =>

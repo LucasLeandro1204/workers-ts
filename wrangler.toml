@@ -10,12 +10,9 @@ PASSWORD = "password"
 
 [durable_objects]
 bindings = [
-  { name = "PING", class_name = "PingDurableObject" }
+  { name = "PING", class_name = "PingDurableObject" },
   { name = "INTEGRATION", class_name = "IntegrationDurableObject" }
 ]
-
-[dev]
-port = 4664
 
 [env.production]
 workers_dev = false
