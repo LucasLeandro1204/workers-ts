@@ -3,6 +3,7 @@ interface Env {
   PASSWORD: string;
 
   PING: DurableObjectNamespace;
+  INTEGRATION: DurableObjectNamespace;
 }
 
 type Bindings = {

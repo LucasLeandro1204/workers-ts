@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
 
-function createPingDurableObject(durable: DurableObjectState) {
+function createIntegrationDurableObject(durable: DurableObjectState) {
   let count: number = 0;
 
   durable.blockConcurrencyWhile(async () => {
@@ -10,22 +10,16 @@ function createPingDurableObject(durable: DurableObjectState) {
 
   const app = new Hono<{ Bindings: Bindings }>();
 
-  app.get('/pong', async (ctx) => {
-    ++count;
-    durable.storage.put('count', count);
-    return ctx.text(`pong ${count}`);
-  });
-
   return app;
 }
 
-export class PingDurableObject {
+export class IntegrationDurableObject {
   env: Env;
   app: Hono<{ Bindings: Bindings }>;
 
   constructor(state: DurableObjectState, env: Env) {
     this.env = env;
-    this.app = createPingDurableObject(state);
+    this.app = createIntegrationDurableObject(state);
   }
 
   async fetch(request: Request) {
