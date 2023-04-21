@@ -16,15 +16,20 @@ export function createWorker() {
     });
   });
 
-  app.use('/integration/*', async (ctx) => {
+  app.use('/integration', async (ctx) => {
     const url = new URL(ctx.req.url);
-    url.pathname = url.pathname.replace('/integration', '');
+    // url.pathname = url.pathname.replace('/integration', '');
 
-    const id = ctx.env.INTEGRATION.newUniqueId();
+    const id = ctx.env.INTEGRATION.idFromName('integration');
 
     const integration = ctx.env.INTEGRATION.get(id);
 
-    return integration.fetch(new Request(url, ctx.req));
+    const response = await integration.fetch(new Request(url, ctx.req));
+
+    return ctx.json({
+      ok: true,
+      data: await response.text(),
+    });
   });
 
   app.get('/ping', async (ctx) => {
