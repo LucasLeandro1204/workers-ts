@@ -1,24 +1,25 @@
 import { Hono } from 'hono';
 
-type Variables = {
-  storage: DurableObjectStorage
-  count: number;
+type Variables<T> = {
+  state: T & {
+    storage: DurableObjectStorage;
+  };
 };
 
 interface IntegrationHonoInterface {
   Bindings: Bindings;
-  Variables: Variables;
+  Variables: Variables<{ count: number } >;
 }
 
 function createIntegrationDurableObject() {
   const app = new Hono<IntegrationHonoInterface>();
 
   app.get('/', async (ctx) => {
-    const count = ctx.get('count') + 1;
+    const state = ctx.get('state');
 
-    ctx.set('count', count);
+    await state.storage.put('count', state.count++);
 
-    return ctx.text(`Integration ${count}`, 200);
+    return ctx.text(`Integration ${state.count}`, 200);
   });
 
   return app;
@@ -29,26 +30,25 @@ export class IntegrationDurableObject {
   app: Hono<IntegrationHonoInterface> = new Hono();
 
   constructor(state: DurableObjectState, env: Env) {
-    let count = 0;
+    const localState = {
+      count: 0,
+      storage: state.storage,
+    };
 
     state.blockConcurrencyWhile(async () => {
       const stored = await state.storage.get<number>('count');
-      count = stored || 0;
+      localState.count = stored || 0;
     });
 
     this.env = env;
     this.app.use('*', async (ctx, next) => {
-      console.log('lol');
-      ctx.set('storage', state.storage);
-      ctx.set('count', count);
+      ctx.set('state', localState);
       await next();
-      count = ctx.get('count');
-      state.storage.put('count', count);
     });
     this.app.route('/integration', createIntegrationDurableObject());
   }
 
   async fetch(request: Request) {
-    return this.app.fetch(request);
+    return this.app.fetch(request, this.env);
   }
 }
