@@ -8,11 +8,13 @@ export type AbstractDOS<T> = {
 export abstract class AbstractDurableObject<T> {
   env: Env;
   state: DurableObjectState;
+  storage: DurableObjectStorage;
   app: Hono<AbstractDOS<T>> = new Hono();
 
   constructor(state: DurableObjectState, env: Env) {
     this.env = env;
     this.state = state;
+    this.storage = state.storage;
 
     let localState: any = {};
 
@@ -24,11 +26,13 @@ export abstract class AbstractDurableObject<T> {
       ctx.set('state', localState);
       await next();
     });
+    this.router();
   }
 
   async fetch(request: Request) {
     return this.app.fetch(request, this.env);
   }
 
+  abstract router(): void;
   abstract initialState(): Promise<object>;
 }

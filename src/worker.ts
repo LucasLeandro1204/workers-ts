@@ -1,49 +1,16 @@
 import { Hono } from 'hono';
 import { cors } from 'hono/cors';
 import { prettyJSON } from 'hono/pretty-json';
+import { createFlowRouter } from './api/flow';
 
 export function createWorker() {
-  const app = new Hono<{ Bindings: Bindings }>();
+  const app = new Hono<HonoInterface>();
 
   app.use('*', prettyJSON());
   app.use('*', cors({ origin: '*' }));
   app.get('/', (ctx) => ctx.text('Worker is running.'));
 
-  app.get('/worker/notification', async (ctx) => {
-    return ctx.json({
-      ok: true,
-      message: 'Notifications',
-    });
-  });
-
-  app.use('/integration', async (ctx) => {
-    const url = new URL(ctx.req.url);
-    // url.pathname = url.pathname.replace('/integration', '');
-
-    const id = ctx.env.INTEGRATION.idFromName('integration');
-
-    const integration = ctx.env.INTEGRATION.get(id);
-
-    const response = await integration.fetch(new Request(url, ctx.req));
-
-    return ctx.json({
-      ok: true,
-      data: await response.text(),
-    });
-  });
-
-  app.get('/ping', async (ctx) => {
-    const ping = ctx.env.PING.get(ctx.env.PING.idFromName('pong'));
-    const url = new URL(ctx.req.url);
-    url.pathname = '/pong';
-
-    const res = await ping.fetch(new Request(url, ctx.req));
-
-    return ctx.json({
-      ok: true,
-      data: await res.json(),
-    });
-  });
+  app.route('/flow', createFlowRouter());
 
   app.notFound((ctx) =>
     ctx.json(

@@ -2,6 +2,7 @@ interface Env {
   SECRET: string;
   PASSWORD: string;
 
+  FLOW: DurableObjectNamespace;
   PING: DurableObjectNamespace;
   INTEGRATION: DurableObjectNamespace;
 }
@@ -15,3 +16,7 @@ type Variables<T> = {
     storage: DurableObjectStorage;
   };
 };
+
+interface HonoInterface {
+  Bindings: Bindings;
+}

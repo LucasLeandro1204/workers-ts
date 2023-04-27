@@ -11,7 +11,8 @@ PASSWORD = "password"
 [durable_objects]
 bindings = [
   { name = "PING", class_name = "PingDurableObject" },
-  { name = "INTEGRATION", class_name = "IntegrationDurableObject" }
+  { name = "FLOW", class_name = "FlowDurableObject" },
+  { name = "CHAT", class_name = "ChatDurableObject" }
 ]
 
 [env.production]
@@ -24,4 +25,4 @@ PASSWORD = ""
 
 [[migrations]]
 tag = "v1"
-new_classes = ["Ping", "Integration"]
+new_classes = ["Ping", "Flow", "Chat"]

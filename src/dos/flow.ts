@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import { AbstractDurableObject, AbstractDOS } from './abstract';
 
-export class ChatDurableObject extends AbstractDurableObject<AbstractDOS<{ count: number }>> {
+export class FlowDurableObject extends AbstractDurableObject<AbstractDOS<{ count: number }>> {
   constructor(state: DurableObjectState, env: Env) {
     super(state, env);
   }
@@ -14,19 +14,19 @@ export class ChatDurableObject extends AbstractDurableObject<AbstractDOS<{ count
 
       await this.storage.put('count', state.count++);
 
-      return ctx.text(`Chat ${state.count}`, 200);
+      return ctx.text(`Flow ${state.count}`, 200);
     });
 
-    this.app.route('/chat', router);
+    this.app.route('/', router);
   }
 
   async initialState() {
     const storage = this.state.storage;
-    const state = await storage.get<number>('count');
+    const count = await storage.get<any[]>('count');
 
     return {
       storage,
-      count: state || 0,
+      count: count || 0,
     };
   }
 }
