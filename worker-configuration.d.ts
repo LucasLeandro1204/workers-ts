@@ -9,3 +9,9 @@ interface Env {
 type Bindings = {
   [K in keyof Env]: Env[K];
 }
+
+type Variables<T> = {
+  state: T & {
+    storage: DurableObjectStorage;
+  };
+};
