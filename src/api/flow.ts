@@ -3,7 +3,7 @@ import { Hono } from 'hono';
 export function createFlowRouter(): Hono<HonoInterface> {
   const router = new Hono<HonoInterface>();
 
-  router.get('/flow/new', async (ctx) => {
+  router.get('/new', async (ctx) => {
     const id = ctx.env.FLOW.newUniqueId();
 
     return ctx.json({
@@ -12,7 +12,7 @@ export function createFlowRouter(): Hono<HonoInterface> {
     });
   });
 
-  router.use('/flow/:id', async (ctx) => {
+  router.use('/:id', async (ctx) => {
     const url = new URL(ctx.req.url);
     const id = ctx.req.param('id');
     url.pathname = url.pathname.replace(`/flow/${id}`, '');

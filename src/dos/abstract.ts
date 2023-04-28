@@ -16,16 +16,6 @@ export abstract class AbstractDurableObject<T> {
     this.state = state;
     this.storage = state.storage;
 
-    let localState: any = {};
-
-    state.blockConcurrencyWhile(async () => {
-      localState = await this.initialState();
-    });
-
-    this.app.use('*', async (ctx, next) => {
-      ctx.set('state', localState);
-      await next();
-    });
     this.router();
   }
 
@@ -34,5 +24,4 @@ export abstract class AbstractDurableObject<T> {
   }
 
   abstract router(): void;
-  abstract initialState(): Promise<object>;
 }

@@ -10,23 +10,13 @@ export class FlowDurableObject extends AbstractDurableObject<AbstractDOS<{ count
     const router = new Hono<AbstractDOS<{ count: number }>>();
 
     router.get('/', async (ctx) => {
-      const state = ctx.get('state');
+      const count = await this.storage.get<number>('count') ?? 0;
 
-      await this.storage.put('count', state.count++);
+      await this.storage.put('count', count + 1);
 
-      return ctx.text(`Flow ${state.count}`, 200);
+      return ctx.text(`Flow ${count}`, 200);
     });
 
     this.app.route('/', router);
-  }
-
-  async initialState() {
-    const storage = this.state.storage;
-    const count = await storage.get<any[]>('count');
-
-    return {
-      storage,
-      count: count || 0,
-    };
   }
 }

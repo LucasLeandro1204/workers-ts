@@ -2,7 +2,7 @@
   "name": "workers-ts",
   "version": "0.0.1",
   "scripts": {
-    "dev": "wrangler dev src/index.ts --experimental-local",
+    "dev": "wrangler dev src/index.ts --experimental-local --persist",
     "dev:open": "wrangler dev src/index.ts",
     "lint": "prettier --write ."
   },
