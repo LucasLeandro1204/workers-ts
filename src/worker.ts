@@ -16,7 +16,6 @@ export function createWorker() {
   app.get('/', (ctx) => ctx.text('Worker is running.'));
 
   app.route('/flow', createFlowRouter());
-  // app.options('/proxy', (ctx) => ctx.text('ok'));
   app.all('/proxy', (ctx) => {
     console.dir(JSON.stringify([...ctx.req.headers.entries()], null, 2));
     console.dir(ctx.req.cookie());
